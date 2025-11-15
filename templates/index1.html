@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictator AI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" onclick="newChat()">
+                    <span>➕</span>
+                    <span>New Chat</span>
+                </button>
+            </div>
+
+            <div class="chat-history" id="chatHistory">
+                <!-- History Loaded Here -->
+            </div>
+            <div class="sidebar-user-panel">
+    <div class="sidebar-username">👤 {{ username }}</div>
+    <form action="/logout" method="GET">
+        <button class="sidebar-logout-btn" type="submit">Logout</button>
+    </form>
+</div>
+        </div>
+
+        <!-- Role Selector -->
+        <div class="role-selector">
+            <label for="roleSelect">🎭 Select Role:</label>
+            <select id="roleSelect">
+                <option value="Hitler's close associate" selected>Hitler's close associate</option>
+                <option value="Jews">Jews</option>
+                <option value="American Journalist">American Journalist</option>
+                <option value="German Young boy">German Young boy</option>
+            </select>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                    <h1><span>🤖</span> Dictator AI</h1>
+                </div>
+                <div class="top-buttons">
+                    <div class="user-info">
+                        👤 <span id="usernameDisplay">{{ username }}</span>
+                    </div>
+                    <form action="/logout" method="GET" style="display:inline;">
+                        <button type="submit" id="logoutBtn">Logout</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chatbox" id="chatbox">
+                <div class="messages" id="messages">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💬</div>
+                        <h2>How can I help you today?</h2>
+                        <p>Start a conversation below</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <div class="input-container">
+                        <input id="userInput" type="text" placeholder="Message Dictator AI..." autocomplete="off" />
+                        <button id="sendBtn">
+                            <span>Send</span>
+                            <span>↑</span>
+                        </button>
+                    </div>
+                    <div class="input-hint">Press Enter to send</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+let currentSessionId = null;
+
+// On Page Load
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadSessions();
+
+    document.getElementById("sendBtn").addEventListener("click", sendMessage);
+    document.getElementById("userInput").addEventListener("keypress", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+});
+
+// Sidebar Toggle
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+    document.getElementById("sidebarOverlay").classList.toggle("active");
+}
+
+// ---------- Load Chat Sessions ----------
+async function loadSessions() {
+    try {
+        const res = await fetch("/sessions");
+        const data = await res.json();
+
+        const historyDiv = document.getElementById("chatHistory");
+        historyDiv.innerHTML = "";
+
+        if (data.sessions.length === 0) {
+            historyDiv.innerHTML = `<p class="no-history">No chats yet</p>`;
+            return;
+        }
+
+        data.sessions.forEach(sess => {
+            const item = document.createElement("div");
+            item.classList.add("history-item");
+
+            item.innerHTML = `
+                <span class="history-title">Chat - ${new Date(sess.updated_at).toLocaleString()}</span>
+
+                <div class="history-menu">
+                    <span class="dots">⋮</span>
+                    <div class="menu-dropdown">
+                        <button onclick="deleteChat('${sess.session_id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+
+            // Clicking item loads chat
+            item.addEventListener("click", () => loadChat(sess.session_id));
+
+            // But clicking the dots SHOULD NOT trigger loading the chat
+            item.querySelector(".history-menu").addEventListener("click", (e) => {
+                e.stopPropagation();
+                e.currentTarget.classList.toggle("active");
+            });
+
+            historyDiv.appendChild(item);
+        });
+
+    } catch (err) {
+        console.error("Error loading sessions", err);
+    }
+}
+
+// Click outside closes dropdowns
+document.addEventListener("click", (e) => {
+    document.querySelectorAll(".history-menu").forEach(menu => {
+        if (!menu.contains(e.target)) {
+            menu.classList.remove("active");
+        }
+    });
+});
+
+// -------- Create New Chat --------
+async function newChat() {
+    const res = await fetch("/new_chat", { method: "POST" });
+    const data = await res.json();
+
+    if (data.status === "ok") {
+        currentSessionId = data.session_id;
+        document.getElementById("messages").innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <h2>New Chat Started</h2>
+            </div>`;
+        await loadSessions();
+    }
+}
+
+// -------- Load Chat History --------
+async function loadChat(sessionId) {
+    currentSessionId = sessionId;
+
+    const res = await fetch(`/get_history/${sessionId}`);
+    const data = await res.json();
+
+    const messagesDiv = document.getElementById("messages");
+    messagesDiv.innerHTML = "";
+
+    if (data.status === "ok" && data.messages.length > 0) {
+        data.messages.forEach(msg => {
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message", msg.role);
+            msgDiv.innerHTML = `<p>${msg.content}</p>`;
+            messagesDiv.appendChild(msgDiv);
+        });
+    } else {
+        messagesDiv.innerHTML = `<p class="no-history">No messages yet in this chat</p>`;
+    }
+    scrollToBottom();
+}
+
+// -------- Send Message --------
+async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (!currentSessionId) {
+        await newChat();
+    }
+
+    appendMessage("user", text);
+    input.value = "";
+
+    const selectedRole = document.getElementById("roleSelect").value;
+
+    const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            message: text,
+            session_id: currentSessionId,
+            role: selectedRole
+        })
+    });
+
+    const data = await res.json();
+    appendMessage("assistant", data.reply || "⚠️ No response from AI");
+    scrollToBottom();
+    await loadSessions();
+}
+
+function appendMessage(role, content) {
+    const messagesDiv = document.getElementById("messages");
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message", role);
+    msgDiv.innerHTML = `<p>${content}</p>`;
+    messagesDiv.appendChild(msgDiv);
+}
+
+function scrollToBottom() {
+    const chatbox = document.getElementById("chatbox");
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+// -------- Delete Chat --------
+async function deleteChat(sessionId) {
+    if (!confirm("Delete this chat permanently?")) return;
+
+    const res = await fetch(`/delete_session/${sessionId}`, {
+        method: "DELETE"
+    });
+
+    const data = await res.json();
+    if (data.status === "ok") {
+        await loadSessions();
+        document.getElementById("messages").innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🗑️</div>
+                <h2>Chat Deleted</h2>
+            </div>`;
+    }
+}
+</script>
+
+</body>
+</html>
