@@ -39,22 +39,13 @@ JWT_EXPIRATION_MINUTES = 30
 # MONGO
 # ---------------------------
 load_dotenv()
-username = quote_plus("Tushar")
-password = quote_plus("Gatthewar@123")  
-client = MongoClient(f"mongodb+srv://{username}:{password}@cluster0.t80rhjy.mongodb.net/?appName=Cluster0")
+username = quote_plus(os.getenv("MONGO_USER"))
+password = quote_plus(os.getenv("MONGO_PASS"))
+mongo_url = os.getenv("MONGO_URI")
+client = MongoClient(mongo_url)
 db = client["DictatorsAI"]
 users = db["Users"]
 chat_sessions = db["chat_sessions"]
-
-
-
-
-
-
-
-
-
-
 
 # ---------------------------
 # NO CACHE HEADERS
@@ -222,12 +213,12 @@ def chat():
         {"username": username, "session_id": session_id},
         {"$push": {"messages": user_msg_doc}, "$set": {"updated_at": datetime.utcnow()}}
     )
-
-    url = "https://motivation-appliances-drum-ntsc.trycloudflare.com/v1/chat/completions"
+    url = os.getenv("LLM_URL")
+    api=os.getenv("LLM_KEY")
 
 
     headers = {
-    "Authorization": "Bearer 4d56879feed79cd659d130aa7f79fc9cf1ec9ea3dc68f096dc1b4b8a47a86a84",
+    "Authorization": f"Bearer {api}",
     "Content-Type": "application/json"
     }
 
@@ -359,4 +350,4 @@ def list_sessions():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0")
