@@ -556,143 +556,122 @@ body {
     background: none;
 }
 /* ============================
-   📱 MOBILE RESPONSIVE - COMPLETE FIX
+   📱 MOBILE RESPONSIVE - REAL DEVICE FIX
    ============================ */
-/* Mobile: Show sidebar user panel */
 @media (max-width: 768px) {
-    /* ... (Existing mobile sidebar panel styles remain unchanged) ... */
-    .sidebar-user-panel {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 20px;
-        border-top: 1px solid #2d2d2d;
-        margin-top: auto;
-    }
-
-    .sidebar-username {
-        font-size: 16px;
-        font-weight: bold;
-        color: #e0e0e0;
-    }
-
-    .sidebar-logout-btn {
-        padding: 10px 15px;
-        background: #e63946;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .sidebar-logout-btn:hover {
-        background: #d00023;
-    }
-
-    /* Hide topbar user info on mobile */
-    .top-buttons {
-        display: none;
-    }
-
-    /* --- Core Fix: Enforce full height and suppress unwanted scroll on body/container --- */
+    
+    /* Fix viewport height for mobile browsers */
     body {
-        overflow: hidden;
         height: 100vh;
-        position: fixed; /* Added: Fixes 100vh issue on mobile browsers */
+        height: -webkit-fill-available;
+        overflow: hidden;
+        position: fixed;
         width: 100%;
-        min-height: 100vh;
+    }
+
+    html {
+        height: -webkit-fill-available;
     }
 
     .container {
         flex-direction: column;
         width: 100%;
-        height: 100%; /* Changed from 100vh to 100% to follow body height */
+        height: 100vh;
+        height: -webkit-fill-available;
         overflow: hidden;
-        position: relative;
     }
 
-    /* Main area - full height flexbox */
+    /* Main area */
     .main {
-        flex: 1;
         display: flex;
         flex-direction: column;
-        height: 100%; /* Changed from 100vh to 100% */
+        height: 100%;
         overflow: hidden;
         width: 100%;
     }
-    /* --- End Core Fix --- */
 
-    /* Topbar - fixed height */
+    /* Topbar - FIXED height */
     .topbar {
-        height: 60px;
-        padding: 10px 15px;
+        height: 50px;
+        min-height: 50px;
+        max-height: 50px;
+        padding: 8px 12px;
         justify-content: space-between;
         flex-shrink: 0;
-        width: 100%;
     }
 
     .topbar h1 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .menu-btn {
         display: block;
         font-size: 20px;
-        padding: 8px 12px;
+        padding: 6px 10px;
     }
 
     .logo-img {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 
-    /* Role selector - fixed height */
+    /* Role selector - FIXED height */
     .role-selector {
-        padding: 12px;
+        padding: 10px;
         width: 100%;
         box-sizing: border-box;
         flex-shrink: 0;
         background: #0f0f0f;
         border-bottom: 1px solid #2d2d2d;
+        min-height: 55px;
+        max-height: 55px;
+    }
+
+    .role-selector label {
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #e0e0e0;
     }
 
     .role-selector select {
         width: 100%;
         font-size: 14px;
-        padding: 10px;
+        padding: 8px;
         background: #1a1a1a;
         color: #e0e0e0;
         border: 1px solid #2d2d2d;
+        border-radius: 6px;
     }
 
-    /* Chatbox - takes remaining space, scrollable */
+    /* Chatbox - FLEXIBLE, takes remaining space */
     .chatbox {
         flex: 1;
+        min-height: 0; /* Important for flexbox */
         width: 100%;
-        padding: 15px 10px;
+        padding: 12px 8px;
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        /* --- Crucial for Flexbox scrolling fix --- */
-        min-height: 0;
+        background: #0f0f0f;
     }
 
-    /* Messages container */
+    /* Messages */
     .messages {
         padding: 0;
         width: 100%;
         max-width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+        min-height: min-content;
     }
 
     /* Message bubbles */
     .message {
-        max-width: 85%;
+        max-width: 80%;
         font-size: 14px;
-        padding: 10px 14px;
+        padding: 10px 12px;
+        margin: 0;
     }
 
     .message.user {
@@ -703,15 +682,16 @@ body {
         align-self: flex-end;
     }
 
-    /* Input area - fixed height, at bottom */
+    /* Input area - FIXED height at bottom */
     .input-area {
-        padding: 12px;
+        padding: 10px;
         width: 100%;
         background: #0f0f0f;
         flex-shrink: 0;
         border-top: 1px solid #2d2d2d;
-        position: relative;
-        z-index: 10;
+        min-height: 70px;
+        max-height: 70px;
+        box-sizing: border-box;
     }
 
     .input-wrapper {
@@ -721,30 +701,35 @@ body {
 
     .input-container {
         width: 100%;
-        padding: 2px;
+        padding: 3px;
+        display: flex;
+        align-items: center;
     }
 
     #userInput {
         font-size: 14px;
         padding: 10px 12px;
+        flex: 1;
     }
 
     #sendBtn {
         padding: 10px 16px;
         font-size: 13px;
+        flex-shrink: 0;
     }
 
     .input-hint {
-        display: none; /* Hide on mobile to save space */
+        display: none;
     }
 
-    /* Sidebar - slide menu */
+    /* Sidebar */
     .sidebar {
         position: fixed;
         top: 0;
         left: -260px;
         width: 260px;
         height: 100vh;
+        height: -webkit-fill-available;
         z-index: 200;
         transition: left 0.3s ease;
     }
@@ -753,7 +738,6 @@ body {
         left: 0;
     }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
         display: none;
     }
@@ -769,47 +753,51 @@ body {
         z-index: 150;
     }
 
-    /* Sidebar user panel - show on mobile */
+    /* Sidebar user panel */
     .sidebar-user-panel {
         display: flex;
         flex-direction: column;
         gap: 10px;
-        padding: 20px;
+        padding: 15px;
         border-top: 1px solid #2d2d2d;
         margin-top: auto;
     }
 
     .sidebar-username {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
         color: #e0e0e0;
     }
 
     .sidebar-logout-btn {
-        padding: 10px 15px;
+        padding: 8px 12px;
         background: #e63946;
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 13px;
     }
 
-    /* Hide topbar user info on mobile */
+    /* Hide desktop user info */
     .top-buttons {
-        display: none;
+        display: none !important;
     }
 
     /* Empty state */
     .empty-state {
-        padding: 20px;
+        padding: 20px 10px;
     }
 
     .empty-state h2 {
-        font-size: 22px;
+        font-size: 20px;
     }
 
     .empty-state-icon {
-        font-size: 48px;
+        font-size: 40px;
+    }
+
+    .empty-state p {
+        font-size: 14px;
     }
 }
