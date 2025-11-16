@@ -594,13 +594,6 @@ body {
     .top-buttons {
         display: none;
     }
-}
-
-
-/* ============================
-   📱 MOBILE RESPONSIVE - COMPLETE FIX
-   ============================ */
-@media (max-width: 768px) {
 
     /* --- Core Fix: Enforce full height and suppress unwanted scroll on body/container --- */
     body {
