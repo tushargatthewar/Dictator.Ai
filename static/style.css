@@ -558,20 +558,63 @@ body {
 /* ============================
    📱 MOBILE RESPONSIVE - COMPLETE FIX
    ============================ */
+/* Mobile: Show sidebar user panel */
 @media (max-width: 768px) {
-    
-    /* Body and container */
+    /* ... (Existing mobile sidebar panel styles remain unchanged) ... */
+    .sidebar-user-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px;
+        border-top: 1px solid #2d2d2d;
+        margin-top: auto;
+    }
+
+    .sidebar-username {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e0e0;
+    }
+
+    .sidebar-logout-btn {
+        padding: 10px 15px;
+        background: #e63946;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .sidebar-logout-btn:hover {
+        background: #d00023;
+    }
+
+    /* Hide topbar user info on mobile */
+    .top-buttons {
+        display: none;
+    }
+}
+
+
+/* ============================
+   📱 MOBILE RESPONSIVE - COMPLETE FIX
+   ============================ */
+@media (max-width: 768px) {
+
+    /* --- Core Fix: Enforce full height and suppress unwanted scroll on body/container --- */
     body {
         overflow: hidden;
         height: 100vh;
-        position: fixed;
+        position: fixed; /* Added: Fixes 100vh issue on mobile browsers */
         width: 100%;
+        min-height: 100vh;
     }
 
     .container {
         flex-direction: column;
         width: 100%;
-        height: 100vh;
+        height: 100%; /* Changed from 100vh to 100% to follow body height */
         overflow: hidden;
         position: relative;
     }
@@ -581,10 +624,11 @@ body {
         flex: 1;
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 100%; /* Changed from 100vh to 100% */
         overflow: hidden;
         width: 100%;
     }
+    /* --- End Core Fix --- */
 
     /* Topbar - fixed height */
     .topbar {
@@ -637,6 +681,8 @@ body {
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
+        /* --- Crucial for Flexbox scrolling fix --- */
+        min-height: 0;
     }
 
     /* Messages container */
@@ -664,7 +710,7 @@ body {
         align-self: flex-end;
     }
 
-    /* Input area - FIXED at bottom */
+    /* Input area - fixed height, at bottom */
     .input-area {
         padding: 12px;
         width: 100%;
