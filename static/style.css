@@ -555,61 +555,151 @@ body {
     -webkit-text-fill-color: initial;
     background: none;
 }
-/* Mobile: Show sidebar user panel */
+/* ============================
+   📱 MOBILE RESPONSIVE - COMPLETE FIX
+   ============================ */
 @media (max-width: 768px) {
-    .sidebar-user-panel {
+    
+    /* Body and container */
+    body {
+        overflow: hidden;
+        height: 100vh;
+        position: fixed;
+        width: 100%;
+    }
+
+    .container {
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Main area - full height flexbox */
+    .main {
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 20px;
-        border-top: 1px solid #ddd;
-        margin-top: 10px;
+        height: 100vh;
+        overflow: hidden;
+        width: 100%;
     }
+
+    /* Topbar - fixed height */
+    .topbar {
+        height: 60px;
+        padding: 10px 15px;
+        justify-content: space-between;
+        flex-shrink: 0;
+        width: 100%;
+    }
+
+    .topbar h1 {
+        font-size: 18px;
+    }
+
+    .menu-btn {
+        display: block;
+        font-size: 20px;
+        padding: 8px 12px;
+    }
+
     .logo-img {
         width: 28px;
         height: 28px;
     }
 
-    .sidebar-username {
-        font-size: 16px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .sidebar-logout-btn {
-        padding: 10px 15px;
-        background: #e63946;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .sidebar-logout-btn:hover {
-        background: #d00023;
-    }
-
-    /* Hide topbar user info on mobile */
-    .top-buttons {
-        display: none;
-    }
-}
-
-
-/* ============================
-   📱 FULL MOBILE RESPONSIVE FIX
-   ============================ */
-@media (max-width: 768px) {
-
-    /* Layout stacks vertically */
-    .container {
-        flex-direction: column;
+    /* Role selector - fixed height */
+    .role-selector {
+        padding: 12px;
         width: 100%;
-        overflow: hidden;
+        box-sizing: border-box;
+        flex-shrink: 0;
+        background: #0f0f0f;
+        border-bottom: 1px solid #2d2d2d;
     }
 
-    /* Sidebar becomes slide menu */
+    .role-selector select {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        border: 1px solid #2d2d2d;
+    }
+
+    /* Chatbox - takes remaining space, scrollable */
+    .chatbox {
+        flex: 1;
+        width: 100%;
+        padding: 15px 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Messages container */
+    .messages {
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Message bubbles */
+    .message {
+        max-width: 85%;
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .message.user {
+        align-self: flex-start;
+    }
+
+    .message.assistant {
+        align-self: flex-end;
+    }
+
+    /* Input area - FIXED at bottom */
+    .input-area {
+        padding: 12px;
+        width: 100%;
+        background: #0f0f0f;
+        flex-shrink: 0;
+        border-top: 1px solid #2d2d2d;
+        position: relative;
+        z-index: 10;
+    }
+
+    .input-wrapper {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .input-container {
+        width: 100%;
+        padding: 2px;
+    }
+
+    #userInput {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    #sendBtn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .input-hint {
+        display: none; /* Hide on mobile to save space */
+    }
+
+    /* Sidebar - slide menu */
     .sidebar {
         position: fixed;
         top: 0;
@@ -624,94 +714,63 @@ body {
         left: 0;
     }
 
-    /* Background overlay for mobile */
-    #sidebarOverlay.active {
+    /* Sidebar overlay */
+    .sidebar-overlay {
+        display: none;
+    }
+
+    .sidebar-overlay.active {
         display: block;
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.7);
         z-index: 150;
     }
 
-    /* Show menu button */
-    .menu-btn {
-        display: block;
-        font-size: 20px;
-        padding: 8px 12px;
-    }
-    /*
-     * The .main container is the parent (flex-direction: column)
-     * It should contain all visual elements: Topbar, Chatbox, Input Area.
-     */
-    .main {
-        height: 100vh;
-        overflow: hidden;
+    /* Sidebar user panel - show on mobile */
+    .sidebar-user-panel {
         display: flex;
         flex-direction: column;
+        gap: 10px;
+        padding: 20px;
+        border-top: 1px solid #2d2d2d;
+        margin-top: auto;
     }
 
-    /* Topbar - Ensure it doesn't shrink */
-    .topbar {
+    .sidebar-username {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e0e0;
+    }
+
+    .sidebar-logout-btn {
         padding: 10px 15px;
-        justify-content: space-between;
-        flex-shrink: 0;
-    }
-
-    .topbar h1 {
-        font-size: 18px;
-    }
-
-    /* Chatbox should stretch full width and take the remaining height */
-    .chatbox {
-        width: 100%;
-        /* These properties are the core of the fix */
-        flex-grow: 1; /* Makes it consume all remaining vertical space */
-        height: auto;
-        min-height: 0; /* Crucial for allowing a flex item with overflow to shrink */
-        padding: 0;
-        overflow-y: auto; /* Allows messages to scroll within the fixed area */
-    }
-
-    /* Messages full width */
-    .messages {
-        padding: 0 12px;
-        width: 100%;
-    }
-
-    /* Input area - Ensure it doesn't shrink */
-    .input-area {
-        padding: 12px;
-        width: 100%;
-        flex-shrink: 0;
-        /* Using sticky ensures it stays at the bottom */
-        position: sticky;
-        bottom: 0;
-    }
-
-    .input-container input {
+        background: #e63946;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
         font-size: 14px;
     }
 
-    /* Buttons shrink */
-    .top-buttons button {
-        padding: 6px 12px;
-        font-size: 12px;
+    /* Hide topbar user info on mobile */
+    .top-buttons {
+        display: none;
     }
 
-    /* Role selector mobile-friendly */
-    .role-selector {
-        padding: 12px;
-        width: 100%;
-        box-sizing: border-box;
-        /* === NEW FIX: Ensure role selector doesn't shrink either === */
-        flex-shrink: 0;
+    /* Empty state */
+    .empty-state {
+        padding: 20px;
     }
 
-    .role-selector select {
-        width: 100%;
-        font-size: 14px;
+    .empty-state h2 {
+        font-size: 22px;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
     }
 }
