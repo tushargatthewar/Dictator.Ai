@@ -48,7 +48,10 @@
             <div class="topbar">
                 <div class="topbar-left">
                     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                    <h1><span>🤖</span> Dictator AI</h1>
+                   <h1>
+    <img src="{{ url_for('static', filename='Logo.jpg') }}" alt="Dictator AI Logo" class="logo-img">
+    Dictator AI
+</h1>
                 </div>
                 <div class="top-buttons">
                     <div class="user-info">
@@ -75,13 +78,13 @@
             <div class="input-area">
                 <div class="input-wrapper">
                     <div class="input-container">
-                        <input id="userInput" type="text" placeholder="Message Dictator AI..." autocomplete="off" />
+                        <textarea id="userInput" placeholder="Message Dictator AI..." autocomplete="off" rows="1"></textarea>
                         <button id="sendBtn">
                             <span>Send</span>
                             <span>↑</span>
                         </button>
                     </div>
-                    <div class="input-hint">Press Enter to send</div>
+                    <div class="input-hint">Press Enter to send, Shift+Enter for new line</div>
                 </div>
             </div>
         </div>
@@ -94,9 +97,19 @@ let currentSessionId = null;
 document.addEventListener("DOMContentLoaded", async () => {
     await loadSessions();
 
+    const textarea = document.getElementById("userInput");
+
+    // Auto-resize textarea
+    textarea.addEventListener("input", function() {
+        this.style.height = "44px"; // Reset to minimum
+        this.style.height = Math.min(this.scrollHeight, 200) + "px"; // Grow up to 200px
+    });
+
     document.getElementById("sendBtn").addEventListener("click", sendMessage);
-    document.getElementById("userInput").addEventListener("keypress", e => {
-        if (e.key === "Enter") {
+    
+    // Updated keypress handler - Enter sends, Shift+Enter for new line
+    textarea.addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
         }
@@ -215,6 +228,7 @@ async function sendMessage() {
 
     appendMessage("user", text);
     input.value = "";
+    input.style.height = "44px"; // Reset height after sending
 
     const selectedRole = document.getElementById("roleSelect").value;
 

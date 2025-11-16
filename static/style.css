@@ -156,6 +156,7 @@ body {
 
 .top-buttons {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
@@ -535,7 +536,25 @@ body {
 .sidebar-user-panel {
     display: none;
 }
-
+.topbar h1 {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    /* Remove gradient effect from logo */
+    filter: none;
+    -webkit-text-fill-color: initial;
+    background: none;
+}
 /* Mobile: Show sidebar user panel */
 @media (max-width: 768px) {
     .sidebar-user-panel {
@@ -545,6 +564,10 @@ body {
         padding: 20px;
         border-top: 1px solid #ddd;
         margin-top: 10px;
+    }
+    .logo-img {
+        width: 28px;
+        height: 28px;
     }
 
     .sidebar-username {
@@ -619,6 +642,12 @@ body {
         font-size: 20px;
         padding: 8px 12px;
     }
+    .main {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
 
     /* Topbar */
     .topbar {
@@ -633,8 +662,10 @@ body {
     /* Chatbox should stretch full width */
     .chatbox {
         width: 100%;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 60px - 120px); /* topbar (60px) + input area (120px) */
         padding: 0;
+        overflow-y: auto; /* Make sure this is here */
+
     }
 
     /* Messages full width */
@@ -645,8 +676,12 @@ body {
 
     /* Input area */
     .input-area {
+        /* padding: 12px;
+        width: 100%; */
         padding: 12px;
         width: 100%;
+        position: sticky;
+        bottom: 0;
     }
 
     .input-container input {
