@@ -642,6 +642,10 @@ body {
         font-size: 20px;
         padding: 8px 12px;
     }
+    /*
+     * The .main container is the parent (flex-direction: column)
+     * It should contain all visual elements: Topbar, Chatbox, Input Area.
+     */
     .main {
         height: 100vh;
         overflow: hidden;
@@ -653,19 +657,24 @@ body {
     .topbar {
         padding: 10px 15px;
         justify-content: space-between;
+        /* Ensure topbar doesn't shrink/grow */
+        flex-shrink: 0;
     }
 
     .topbar h1 {
         font-size: 18px;
     }
 
-    /* Chatbox should stretch full width */
+    /* Chatbox should stretch full width and take the remaining height */
     .chatbox {
         width: 100%;
-        height: calc(100vh - 60px - 120px); /* topbar (60px) + input area (120px) */
+        /* === START OF FIX === */
+        flex-grow: 1; /* Makes it consume all remaining vertical space */
+        height: auto; /* Overrides old calc() or prevents default flex sizing issues */
+        min-height: 0; /* Crucial for allowing a flex item with overflow to shrink */
+        /* === END OF FIX === */
         padding: 0;
-        overflow-y: auto; /* Make sure this is here */
-
+        overflow-y: auto; /* Allows messages to scroll within the fixed area */
     }
 
     /* Messages full width */
@@ -676,10 +685,10 @@ body {
 
     /* Input area */
     .input-area {
-        /* padding: 12px;
-        width: 100%; */
         padding: 12px;
         width: 100%;
+        /* Making it sticky/fixed is okay, but we ensure it doesn't shrink/grow */
+        flex-shrink: 0;
         position: sticky;
         bottom: 0;
     }
@@ -704,15 +713,5 @@ body {
     .role-selector select {
         width: 100%;
         font-size: 14px;
-    }
-}
-@media (max-width: 768px) {
-    #logoutBtn {
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-
-    .top-buttons {
-        gap: 6px;
     }
 }
