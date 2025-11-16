@@ -600,92 +600,13 @@ body {
 /* ============================
    📱 FULL MOBILE RESPONSIVE FIX
    ============================ */
-/* ============================
-   📱 FULL MOBILE RESPONSIVE FIX
-   ============================ */
 @media (max-width: 768px) {
 
     /* Layout stacks vertically */
     .container {
         flex-direction: column;
         width: 100%;
-        height: 100vh;
         overflow: hidden;
-    }
-
-    /* Main chat area takes full height */
-    .main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    /* Topbar - fixed height */
-    .topbar {
-        height: 60px;
-        padding: 10px 15px;
-        justify-content: space-between;
-        flex-shrink: 0;
-    }
-
-    /* Role selector - fixed height */
-    .role-selector {
-        padding: 12px;
-        width: 100%;
-        box-sizing: border-box;
-        flex-shrink: 0;
-        border-bottom: 1px solid #2d2d2d;
-    }
-
-    .role-selector select {
-        width: 100%;
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    /* Chatbox - flexible, scrollable */
-    .chatbox {
-        flex: 1;
-        width: 100%;
-        padding: 12px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    /* Messages container */
-    .messages {
-        padding: 0;
-        width: 100%;
-        max-width: 100%;
-    }
-
-    /* Input area - fixed at bottom */
-    .input-area {
-        padding: 12px;
-        width: 100%;
-        background: #0f0f0f;
-        flex-shrink: 0;
-        border-top: 1px solid #2d2d2d;
-    }
-
-    .input-wrapper {
-        max-width: 100%;
-    }
-
-    .input-container {
-        width: 100%;
-    }
-
-    .input-container input {
-        font-size: 14px;
-        padding: 10px 12px;
-    }
-
-    #sendBtn {
-        padding: 10px 16px;
-        font-size: 13px;
     }
 
     /* Sidebar becomes slide menu */
@@ -721,9 +642,57 @@ body {
         font-size: 20px;
         padding: 8px 12px;
     }
+    /*
+     * The .main container is the parent (flex-direction: column)
+     * It should contain all visual elements: Topbar, Chatbox, Input Area.
+     */
+    .main {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Topbar - Ensure it doesn't shrink */
+    .topbar {
+        padding: 10px 15px;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
 
     .topbar h1 {
         font-size: 18px;
+    }
+
+    /* Chatbox should stretch full width and take the remaining height */
+    .chatbox {
+        width: 100%;
+        /* These properties are the core of the fix */
+        flex-grow: 1; /* Makes it consume all remaining vertical space */
+        height: auto;
+        min-height: 0; /* Crucial for allowing a flex item with overflow to shrink */
+        padding: 0;
+        overflow-y: auto; /* Allows messages to scroll within the fixed area */
+    }
+
+    /* Messages full width */
+    .messages {
+        padding: 0 12px;
+        width: 100%;
+    }
+
+    /* Input area - Ensure it doesn't shrink */
+    .input-area {
+        padding: 12px;
+        width: 100%;
+        flex-shrink: 0;
+        /* Using sticky ensures it stays at the bottom */
+        position: sticky;
+        bottom: 0;
+    }
+
+    .input-container input {
+        font-size: 14px;
     }
 
     /* Buttons shrink */
@@ -732,54 +701,17 @@ body {
         font-size: 12px;
     }
 
-    /* User info in topbar */
-    .user-info {
-        font-size: 12px;
+    /* Role selector mobile-friendly */
+    .role-selector {
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        /* === NEW FIX: Ensure role selector doesn't shrink either === */
+        flex-shrink: 0;
     }
 
-    #logoutBtn {
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-
-    .top-buttons {
-        gap: 6px;
-    }
-
-    /* Message bubbles mobile size */
-    .message {
-        max-width: 85%;
+    .role-selector select {
+        width: 100%;
         font-size: 14px;
-        padding: 10px 14px;
-    }
-
-    /* Sidebar user panel (mobile only) */
-    .sidebar-user-panel {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 20px;
-        border-top: 1px solid #2d2d2d;
-        margin-top: 10px;
-    }
-
-    .sidebar-username {
-        font-size: 16px;
-        font-weight: bold;
-        color: #e0e0e0;
-    }
-
-    .sidebar-logout-btn {
-        padding: 10px 15px;
-        background: #e63946;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .sidebar-logout-btn:hover {
-        background: #d00023;
     }
 }
