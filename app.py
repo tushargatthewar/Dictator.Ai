@@ -47,6 +47,16 @@ db = client["DictatorsAI"]
 users = db["Users"]
 chat_sessions = db["chat_sessions"]
 
+
+
+
+
+
+
+
+
+
+
 # ---------------------------
 # NO CACHE HEADERS
 # ---------------------------
@@ -177,6 +187,7 @@ def new_chat():
     chat_sessions.insert_one({
         "username": username,
         "session_id": session_id,
+        "title": None,     #Here chat histry renameing title
         "messages": [],  # list of {role, content, time}
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
@@ -194,8 +205,12 @@ def chat():
     user_message = data.get('message')
     session_id = data.get('session_id')
     selected_role = data.get('role')
+    model=data.get('model','gpt-4')
     print(selected_role)
+    print("######################################################################################")
+    print(model)
     prompt=generate_prompt(selected_role,user_message)
+
 
     if not user_message:
         return jsonify({'reply': 'Please type a message!'}), 400
@@ -206,6 +221,18 @@ def chat():
     sess = chat_sessions.find_one({"username": username, "session_id": session_id})
     if not sess:
         return jsonify({'reply': 'Session not found'}), 404
+    # ---- AUTO SET TITLE BASED ON FIRST USER MESSAGE ----
+    if sess.get("title") is None:  
+        # take first 4 words of the user's first query
+        words = user_message.strip().split()
+        title = " ".join(words[:4])  # first 4 words
+
+        # save title permanently
+        chat_sessions.update_one(
+            {"username": username, "session_id": session_id},
+            {"$set": {"title": title}}
+        )
+
 
     # Save user's message to DB
     user_msg_doc = {"role": "user", "content": user_message, "time": datetime.utcnow()}
@@ -213,6 +240,7 @@ def chat():
         {"username": username, "session_id": session_id},
         {"$push": {"messages": user_msg_doc}, "$set": {"updated_at": datetime.utcnow()}}
     )
+
     url = os.getenv("LLM_URL")
     api=os.getenv("LLM_KEY")
 
@@ -221,6 +249,7 @@ def chat():
     "Authorization": f"Bearer {api}",
     "Content-Type": "application/json"
     }
+
 
 
     # Prepare payload to LLM
@@ -294,6 +323,7 @@ def get_history(session_id):
 
     return jsonify({'status': 'ok', 'session_id': session_id, 'messages': messages})
 
+
 #Delete chat session
 @app.route('/delete_session/<session_id>', methods=['DELETE'])
 def delete_session(session_id):
@@ -336,18 +366,30 @@ def list_sessions():
     if not username:
         return jsonify({'status': 'error', 'message': 'Please login first!'}), 401
 
-    cursor = chat_sessions.find({"username": username}, {"_id": 0, "session_id": 1, "created_at": 1, "updated_at": 1}).sort("updated_at", -1)
+    #cursor = chat_sessions.find({"username": username}, {"_id": 0, "session_id": 1, "created_at": 1, "updated_at": 1}).sort("updated_at", -1)
+    cursor = chat_sessions.find(
+    {"username": username},
+    {"_id": 0, "session_id": 1, "title": 1, "created_at": 1, "updated_at": 1}
+).sort("updated_at", -1) #here is also chnaging for chat histry okay
+
     sessions = []
-    for s in cursor:
+    for s in cursor: #here also chnaging for chat histry okay
         sessions.append({
-            "session_id": s.get("session_id"),
-            "created_at": s.get("created_at").isoformat() if isinstance(s.get("created_at"), datetime) else s.get("created_at"),
-            "updated_at": s.get("updated_at").isoformat() if isinstance(s.get("updated_at"), datetime) else s.get("updated_at")
-        })
+    "session_id": s.get("session_id"),
+    "title": s.get("title"),  # <-- ADD THIS
+    "created_at": s.get("created_at").isoformat() if isinstance(s.get("created_at"), datetime) else s.get("created_at"),
+    "updated_at": s.get("updated_at").isoformat() if isinstance(s.get("updated_at"), datetime) else s.get("updated_at")
+})
+
+        # sessions.append({
+        #     "session_id": s.get("session_id"),
+        #     "created_at": s.get("created_at").isoformat() if isinstance(s.get("created_at"), datetime) else s.get("created_at"),
+        #     "updated_at": s.get("updated_at").isoformat() if isinstance(s.get("updated_at"), datetime) else s.get("updated_at")
+        # })
     return jsonify({'status': 'ok', 'sessions': sessions})
 
 
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(debug=True)

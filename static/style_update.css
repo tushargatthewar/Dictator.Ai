@@ -26,8 +26,8 @@ body {
     flex-direction: column;
     transition: all 0.3s ease;
     position: relative;
-}
 
+}
 .sidebar.collapsed {
     width: 0;
     min-width: 0;
@@ -40,6 +40,7 @@ body {
     padding: 20px;
     border-bottom: 1px solid #2d2d2d;
 }
+
 .sidebar-top-row {
     display: flex;
     justify-content: space-between;
@@ -96,7 +97,6 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
-
 
 .new-chat-btn {
     width: 100%;
@@ -286,16 +286,7 @@ body {
     animation: slideIn 0.3s ease;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+
 
 .message-avatar {
     width: 36px;
@@ -536,16 +527,7 @@ body {
     animation-delay: 0.4s;
 }
 
-@keyframes typing {
-    0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.7;
-    }
-    30% {
-        transform: translateY(-10px);
-        opacity: 1;
-    }
-}
+
 
 /* Mobile Overlay */
 .sidebar-overlay {
@@ -560,11 +542,17 @@ body {
     backdrop-filter: blur(4px);
 }
 
+/* FIX: Prevent blur freeze on mobile emulation */
 .sidebar-overlay.active {
     display: block;
     will-change: opacity, transform;
     transform: translateZ(0);
 }
+
+
+
+
+
 /* .role-selector {
     padding: 10px;
     border-top: 1px solid #ddd;
@@ -723,180 +711,24 @@ body {
     }
 }
 /* ============================
-   📱 MOBILE RESPONSIVE - REAL DEVICE FIX
+   📱 FULL MOBILE RESPONSIVE FIX
    ============================ */
 @media (max-width: 768px) {
-    
-    /* Fix viewport height for mobile browsers */
-    body {
-        height: 100vh;
-        height: -webkit-fill-available;
-        overflow: hidden;
-        position: fixed;
-        width: 100%;
-    }
 
-    html {
-        height: -webkit-fill-available;
-    }
-
+    /* Layout stacks vertically */
     .container {
         flex-direction: column;
         width: 100%;
-        height: 100vh;
-        height: -webkit-fill-available;
         overflow: hidden;
     }
 
-    /* Main area */
-    .main {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden;
-        width: 100%;
-    }
-
-    /* Topbar - FIXED height */
-    .topbar {
-        height: 50px;
-        min-height: 50px;
-        max-height: 50px;
-        padding: 8px 12px;
-        justify-content: space-between;
-        flex-shrink: 0;
-    }
-
-    .topbar h1 {
-        font-size: 16px;
-    }
-
-    .menu-btn {
-        display: block;
-        font-size: 20px;
-        padding: 6px 10px;
-    }
-
-    .logo-img {
-        width: 24px;
-        height: 24px;
-    }
-
-    /* Role selector - FIXED height */
-    .role-selector {
-        padding: 10px;
-        width: 100%;
-        box-sizing: border-box;
-        flex-shrink: 0;
-        background: #0f0f0f;
-        border-bottom: 1px solid #2d2d2d;
-        min-height: 55px;
-        max-height: 55px;
-    }
-
-    .role-selector label {
-        font-size: 13px;
-        margin-bottom: 5px;
-        color: #e0e0e0;
-    }
-
-    .role-selector select {
-        width: 100%;
-        font-size: 14px;
-        padding: 8px;
-        background: #1a1a1a;
-        color: #e0e0e0;
-        border: 1px solid #2d2d2d;
-        border-radius: 6px;
-    }
-
-    /* Chatbox - FLEXIBLE, takes remaining space */
-    .chatbox {
-        flex: 1;
-        min-height: 0; /* Important for flexbox */
-        width: 100%;
-        padding: 12px 8px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        background: #0f0f0f;
-    }
-
-    /* Messages */
-    .messages {
-        padding: 0;
-        width: 100%;
-        max-width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        min-height: min-content;
-    }
-
-    /* Message bubbles */
-    .message {
-        max-width: 80%;
-        font-size: 14px;
-        padding: 10px 12px;
-        margin: 0;
-    }
-
-    .message.user {
-        align-self: flex-start;
-    }
-
-    .message.assistant {
-        align-self: flex-end;
-    }
-
-    /* Input area - FIXED height at bottom */
-    .input-area {
-        padding: 10px;
-        width: 100%;
-        background: #0f0f0f;
-        flex-shrink: 0;
-        border-top: 1px solid #2d2d2d;
-        min-height: 70px;
-        max-height: 70px;
-        box-sizing: border-box;
-    }
-
-    .input-wrapper {
-        max-width: 100%;
-        width: 100%;
-    }
-
-    .input-container {
-        width: 100%;
-        padding: 3px;
-        display: flex;
-        align-items: center;
-    }
-
-    #userInput {
-        font-size: 14px;
-        padding: 10px 12px;
-        flex: 1;
-    }
-
-    #sendBtn {
-        padding: 10px 16px;
-        font-size: 13px;
-        flex-shrink: 0;
-    }
-
-    .input-hint {
-        display: none;
-    }
-
-    /* Sidebar */
+    /* Sidebar becomes slide menu */
     .sidebar {
         position: fixed;
         top: 0;
         left: -260px;
         width: 260px;
         height: 100vh;
-        height: -webkit-fill-available;
         z-index: 200;
         transition: left 0.3s ease;
     }
@@ -905,66 +737,138 @@ body {
         left: 0;
     }
 
-    .sidebar-overlay {
-        display: none;
-    }
-
-    .sidebar-overlay.active {
+    /* Background overlay for mobile */
+    #sidebarOverlay.active {
         display: block;
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0,0,0,0.7);
+        background: rgba(0,0,0,0.5);
         z-index: 150;
     }
+    
+    .show-history-btn {
+        display: none !important;
+    }
 
-    /* Sidebar user panel */
-    .sidebar-user-panel {
+    /* Show menu button */
+    .menu-btn {
+        display: block;
+        font-size: 20px;
+        padding: 8px 12px;
+    }
+    .main {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+        padding: 10px 15px;
+        justify-content: space-between;
+    }
+
+    .topbar h1 {
+        font-size: 18px;
+    }
+
+    /* Chatbox should stretch full width */
+    .chatbox {
+        width: 100%;
+        height: calc(100vh - 60px - 120px); /* topbar (60px) + input area (120px) */
+        padding: 0;
+        overflow-y: auto; /* Make sure this is here */
+
+    }
+
+    /* Messages full width */
+    .messages {
+        padding: 0 12px;
+        width: 100%;
+    }
+
+    /* Input area */
+    .input-area {
+        /* padding: 12px;
+        width: 100%; */
+        padding: 12px;
+        width: 100%;
+        position: sticky;
+        bottom: 0;
+    }
+
+    .input-container input {
+        font-size: 14px;
+    }
+
+    /* Buttons shrink */
+    .top-buttons button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    /* Role selector mobile-friendly */
+    /* .role-selector {
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .role-selector select {
+        width: 100%;
+        font-size: 14px;
+    } */
+     .sidebar-user-panel {
         display: flex;
         flex-direction: column;
         gap: 10px;
-        padding: 15px;
-        border-top: 1px solid #2d2d2d;
-        margin-top: auto;
+        padding: 20px;
+        border-top: 1px solid #ddd;
+        margin-top: 10px;
+    }
+    .logo-img {
+        width: 28px;
+        height: 28px;
+    }
+    .close-sidebar-btn {
+        display: block !important;  /* Added !important to force it */
     }
 
     .sidebar-username {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: bold;
-        color: #e0e0e0;
+        color: #333;
     }
 
     .sidebar-logout-btn {
-        padding: 8px 12px;
+        padding: 10px 15px;
         background: #e63946;
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 13px;
-    }
-
-    /* Hide desktop user info */
-    .top-buttons {
-        display: none !important;
-    }
-
-    /* Empty state */
-    .empty-state {
-        padding: 20px 10px;
-    }
-
-    .empty-state h2 {
-        font-size: 20px;
-    }
-
-    .empty-state-icon {
-        font-size: 40px;
-    }
-
-    .empty-state p {
         font-size: 14px;
     }
+
+    .sidebar-logout-btn:hover {
+        background: #d00023;
+    }
+
+    /* Hide topbar user info on mobile */
+    .top-buttons {
+        display: none;
+    }
+     #logoutBtn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .top-buttons {
+        gap: 6px;
+    }
 }
+

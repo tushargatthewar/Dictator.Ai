@@ -14,7 +14,12 @@
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
+
             <div class="sidebar-header">
+                 <div class="sidebar-top-row">
+                    <h2 class="sidebar-title">Chats</h2>
+                    <button class="close-sidebar-btn" onclick="toggleSidebar()">✕</button><!-- Close button -->
+                </div>
                 <button class="new-chat-btn" onclick="newChat()">
                     <span>➕</span>
                     <span>New Chat</span>
@@ -31,9 +36,12 @@
     </form>
 </div>
         </div>
-
+         <button class="show-history-btn" id="showHistoryBtn" onclick="toggleSidebar()">
+            <span>📋</span>
+            <span>History</span><!-- History Button  -->
+        </button>
         <!-- Role Selector -->
-        <div class="role-selector">
+        <!-- <div class="role-selector">
             <label for="roleSelect">🎭 Select Role:</label>
             <select id="roleSelect">
                 <option value="Hitler's close associate" selected>Hitler's close associate</option>
@@ -41,7 +49,7 @@
                 <option value="American Journalist">American Journalist</option>
                 <option value="German Young boy">German Young boy</option>
             </select>
-        </div>
+        </div> -->
 
         <!-- Main Chat Area -->
         <div class="main">
@@ -50,7 +58,7 @@
                     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
                    <h1>
     <img src="{{ url_for('static', filename='Logo.jpg') }}" alt="Dictator AI Logo" class="logo-img">
-    DICTATOR'S AI
+    Dictator AI
 </h1>
                 </div>
                 <div class="top-buttons">
@@ -68,8 +76,8 @@
                 <div class="messages" id="messages">
                     <div class="empty-state">
                         <div class="empty-state-icon">💬</div>
-                        <h2>Silence is treason. Speak your command, or step aside.</h2>
-                        
+                        <h2>How can I help you today?</h2>
+                        <p>Start a conversation below</p>
                     </div>
                 </div>
             </div>
@@ -78,6 +86,12 @@
             <div class="input-area">
                 <div class="input-wrapper">
                     <div class="input-container">
+                         <button class="selector-btn" id="modelBtn" title="Select Model">
+                🤖
+            </button>
+            <button class="selector-btn" id="roleBtn" title="Select Role">
+                🎭
+            </button>
                         <textarea id="userInput" placeholder="Message Dictator AI..." autocomplete="off" rows="1"></textarea>
                         <button id="sendBtn">
                             <span>Send</span>
@@ -86,6 +100,28 @@
                     </div>
                     <div class="input-hint">Press Enter to send, Shift+Enter for new line</div>
                 </div>
+                 <div class="selector-dropdown" id="modelDropdown">
+                <div class="dropdown-header">Select Model</div>
+                <select id="modelSelect" size="4">
+                    <option value="gpt-4" selected>GPT-4</option>
+                    <option value="gpt-3.5">GPT-3.5 Turbo</option>
+                    <option value="claude">Claude</option>
+                    <option value="gemini">Gemini Pro</option>
+                </select>
+            </div>
+                
+
+            <div class="selector-dropdown" id="roleDropdown">
+                <div class="dropdown-header">Select Role</div>
+                <select id="roleSelect" size="4">
+                    <option value="Hitler's close associate" selected>Hitler's close associate</option>
+                    <option value="Jews">Jews</option>
+                    <option value="American Journalist">American Journalist</option>
+                    <option value="German Young boy">German Young boy</option>
+                </select>
+            </div>
+
+        
             </div>
         </div>
     </div>
@@ -114,13 +150,138 @@ document.addEventListener("DOMContentLoaded", async () => {
             sendMessage();
         }
     });
+
+    document.getElementById("modelBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown('modelDropdown', 'modelBtn');
+    });
+    
+    // Role selector button
+    document.getElementById("roleBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown('roleDropdown', 'roleBtn');
+    });
+    
+    // Auto-close dropdown when selecting
+    document.getElementById("modelSelect").addEventListener("change", () => {
+        document.getElementById("modelDropdown").classList.remove("active");
+        document.getElementById("modelBtn").classList.remove("active");
+    });
+    
+    document.getElementById("roleSelect").addEventListener("change", () => {
+        document.getElementById("roleDropdown").classList.remove("active");
+        document.getElementById("roleBtn").classList.remove("active");
+    });
 });
 
-// Sidebar Toggle
+
+
+//Chnage this fucntion to side bar handling okay
+// Sidebar Toggle - works on both desktop and mobile
 function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("active");
-    document.getElementById("sidebarOverlay").classList.toggle("active");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    const historyBtn = document.getElementById("showHistoryBtn");
+    
+    // Better mobile detection using computed styles
+    const sidebarStyles = window.getComputedStyle(sidebar);
+    const isMobile = sidebarStyles.position === 'fixed';
+    
+    if (isMobile) {
+        // Mobile: slide sidebar in/out
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+        
+        // Remove desktop class if exists
+        sidebar.classList.remove("collapsed");
+        historyBtn.style.display = "none";
+    } 
+    else {
+        // Desktop: collapse sidebar
+        const isCollapsed = sidebar.classList.toggle("collapsed");
+        
+        // Show/hide history button
+        historyBtn.style.display = isCollapsed ? "flex" : "none";
+        
+        // Remove mobile classes and overlay
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+    }
 }
+
+// Handle window resize - cleanup when switching between desktop/mobile
+let resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        const historyBtn = document.getElementById("showHistoryBtn");
+        
+        // Check current mode
+        const sidebarStyles = window.getComputedStyle(sidebar);
+        const isMobile = sidebarStyles.position === 'fixed';
+        
+        if (isMobile) {
+            // Clean up desktop classes
+            sidebar.classList.remove("collapsed");
+            historyBtn.style.display = "none";
+        } else {
+            // Clean up mobile classes
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        }
+    }, 250);
+});
+
+
+// Selector Dropdown Toggle
+function toggleDropdown(dropdownId, btnId) {
+    const dropdown = document.getElementById(dropdownId);
+    const btn = document.getElementById(btnId);
+    const allDropdowns = document.querySelectorAll('.selector-dropdown');
+    const allBtns = document.querySelectorAll('.selector-btn');
+    
+    // Close all other dropdowns
+    allDropdowns.forEach(d => {
+        if (d.id !== dropdownId) {
+            d.classList.remove('active');
+        }
+    });
+    
+    // Remove active from all buttons
+    allBtns.forEach(b => {
+        if (b.id !== btnId) {
+            b.classList.remove('active');
+        }
+    });
+    
+    // Toggle current dropdown
+    dropdown.classList.toggle('active');
+    btn.classList.toggle('active');
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+    const dropdowns = document.querySelectorAll('.selector-dropdown');
+    const buttons = document.querySelectorAll('.selector-btn');
+    
+    let clickedInside = false;
+    
+    dropdowns.forEach(dropdown => {
+        if (dropdown.contains(e.target)) clickedInside = true;
+    });
+    
+    buttons.forEach(btn => {
+        if (btn.contains(e.target)) clickedInside = true;
+    });
+    
+    if (!clickedInside) {
+        dropdowns.forEach(d => d.classList.remove('active'));
+        buttons.forEach(b => b.classList.remove('active'));
+    }
+});
+
 
 // ---------- Load Chat Sessions ----------
 async function loadSessions() {
@@ -139,10 +300,9 @@ async function loadSessions() {
         data.sessions.forEach(sess => {
             const item = document.createElement("div");
             item.classList.add("history-item");
-
+            //Chnage is here for history renameing okay 
             item.innerHTML = `
-                <span class="history-title">Chat - ${new Date(sess.updated_at).toLocaleString()}</span>
-
+               <span class="history-title">${sess.title ? sess.title : "New Chat"}</span>
                 <div class="history-menu">
                     <span class="dots">⋮</span>
                     <div class="menu-dropdown">
@@ -150,6 +310,7 @@ async function loadSessions() {
                     </div>
                 </div>
             `;
+
 
             // Clicking item loads chat
             item.addEventListener("click", () => loadChat(sess.session_id));
@@ -231,6 +392,8 @@ async function sendMessage() {
     input.style.height = "44px"; // Reset height after sending
 
     const selectedRole = document.getElementById("roleSelect").value;
+    const selectedModel = document.getElementById("modelSelect").value;  // ADD THIS
+
 
     const res = await fetch("/chat", {
         method: "POST",
@@ -238,7 +401,8 @@ async function sendMessage() {
         body: JSON.stringify({
             message: text,
             session_id: currentSessionId,
-            role: selectedRole
+            role: selectedRole,
+            model: selectedModel  // ADD THIS
         })
     });
 
