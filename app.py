@@ -309,15 +309,17 @@ def chat():
                 except Exception:
                     # fallback: maybe top-level "reply" or "output"
                     ai_reply = llm_json.get("reply") or llm_json.get("output") or str(llm_json)
+
         else:
             ai_reply = str(llm_json)
             # --- MODIFICATION START ---
             # Clean the extracted reply by removing the specific end tag
             if isinstance(ai_reply, str):
-                ai_reply = ai_reply.replace("<|im_end|>", "").strip()
+                print("dcdzzszcdcdscdcDCDCcccccccccccccccccccccccd",ai_reply)
             # --- MODIFICATION END ---
+        ai_reply = ai_reply.replace("<|im_end|>", "").strip()
 
-            
+
     except requests.RequestException as e:
         app.logger.error(f"LLM request failed: {e}")
         ai_reply = "⚠️ Error contacting AI server."
