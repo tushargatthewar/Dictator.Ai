@@ -260,7 +260,7 @@ def chat():
 
         # Prepare payload to LLM
         data = {
-            "model": "krishnasuratwala/Dictatorai_one_to_one_model",
+            "model": "krishnasuratwala/Dictatorai_speechmodel",
             "messages": [
                 {"role":"user", "content": prompt}
             ]
@@ -276,7 +276,7 @@ def chat():
         }
                 # Prepare payload to LLM
         data = {
-            "model": "krishnasuratwala/Dictatorai_speechmodel",
+            "model": "krishnasuratwala/Dictatorai_one_to_one_model",
             "messages": [
                 {"role":"user", "content": prompt}
             ]
