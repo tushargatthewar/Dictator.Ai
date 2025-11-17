@@ -246,7 +246,7 @@ def chat():
         {"username": username, "session_id": session_id},
         {"$push": {"messages": user_msg_doc}, "$set": {"updated_at": datetime.utcnow()}}
     )
-    if model=="One_to_one":
+    if model=="Public":
         url = os.getenv("LLM_URL1")
         api=os.getenv("LLM_KEY1")
 
@@ -265,7 +265,7 @@ def chat():
                 {"role":"user", "content": prompt}
             ]
         }
-    else:
+    elif model=="Private":
         url = os.getenv("LLM_URL2")
         api=os.getenv("LLM_KEY2")
 
@@ -274,16 +274,20 @@ def chat():
         "Authorization": f"Bearer {api}",
         "Content-Type": "application/json"
         }
-
-
-
-        # Prepare payload to LLM
+                # Prepare payload to LLM
         data = {
             "model": "krishnasuratwala/Dictatorai_speechmodel",
             "messages": [
                 {"role":"user", "content": prompt}
             ]
         }
+    else:
+
+        return jsonify({'reply': 'Invalid model selected!'}), 400
+
+
+
+
 
     print(data["messages"])
 
