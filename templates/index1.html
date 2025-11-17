@@ -40,16 +40,6 @@
             <span>📋</span>
             <span>History</span><!-- History Button  -->
         </button>
-        <!-- Role Selector -->
-        <!-- <div class="role-selector">
-            <label for="roleSelect">🎭 Select Role:</label>
-            <select id="roleSelect">
-                <option value="Hitler's close associate" selected>Hitler's close associate</option>
-                <option value="Jews">Jews</option>
-                <option value="American Journalist">American Journalist</option>
-                <option value="German Young boy">German Young boy</option>
-            </select>
-        </div> -->
 
         <!-- Main Chat Area -->
         <div class="main">
@@ -101,11 +91,9 @@
                 </div>
                  <div class="selector-dropdown" id="modelDropdown">
                 <div class="dropdown-header">Select Model</div>
-                <select id="modelSelect" size="4">
-                    <option value="gpt-4" selected>GPT-4</option>
-                    <option value="gpt-3.5">GPT-3.5 Turbo</option>
-                    <option value="claude">Claude</option>
-                    <option value="gemini">Gemini Pro</option>
+                <select id="modelSelect" size="2">
+                    <option value="Private" selected>Private</option>
+                    <option value="Public">Public</option>
                 </select>
             </div>
                 
@@ -113,10 +101,7 @@
             <div class="selector-dropdown" id="roleDropdown">
                 <div class="dropdown-header">Select Role</div>
                 <select id="roleSelect" size="4">
-                    <option value="Hitler's close associate" selected>Hitler's close associate</option>
-                    <option value="Jews">Jews</option>
-                    <option value="American Journalist">American Journalist</option>
-                    <option value="German Young boy">German Young boy</option>
+                    <!-- Roles will be loaded dynamically based on model -->
                 </select>
             </div>
 
@@ -127,6 +112,45 @@
 
 <script>
 let currentSessionId = null;
+
+// Define different roles for each model
+const MODEL_ROLES = {
+    "Public": [
+        { value: "Hitler's close associate", text: "Hitler's close associate" },
+        { value: "Jews", text: "Jews" },
+        { value: "American Journalist", text: "American Journalist" },
+        { value: "German Young boy", text: "German Young boy" }
+    ],
+    "Private": [
+        { value: "Psychologist", text: "Psychologist" },
+        { value: "Skeptical Journalist", text: "Skeptical Journalist" },
+        { value: "Political Student", text: "Political Student" },
+        { value: "General Audience", text: "General Audience" }
+    ]
+};
+
+// Update roles based on selected model
+function updateRolesForModel(modelValue) {
+    const roleSelect = document.getElementById("roleSelect");
+    const roles = MODEL_ROLES[modelValue] || MODEL_ROLES["Private"]; // Fallback to Private
+    
+    // Clear existing options
+    roleSelect.innerHTML = "";
+    
+    // Add new options based on model
+    roles.forEach((role, index) => {
+        const option = document.createElement("option");
+        option.value = role.value;
+        option.textContent = role.text;
+        if (index === 0) {
+            option.selected = true; // Select first role by default
+        }
+        roleSelect.appendChild(option);
+    });
+    
+    // Update the size attribute to match number of roles
+    roleSelect.size = roles.length;
+}
 
 // On Page Load
 document.addEventListener("DOMContentLoaded", async () => {
@@ -161,8 +185,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         toggleDropdown('roleDropdown', 'roleBtn');
     });
     
-    // Auto-close dropdown when selecting
-    document.getElementById("modelSelect").addEventListener("change", () => {
+    // Auto-close dropdown when selecting AND update roles
+    document.getElementById("modelSelect").addEventListener("change", (e) => {
+        const selectedModel = e.target.value;
+        updateRolesForModel(selectedModel); // Update roles based on model
+        
         document.getElementById("modelDropdown").classList.remove("active");
         document.getElementById("modelBtn").classList.remove("active");
     });
@@ -171,6 +198,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("roleDropdown").classList.remove("active");
         document.getElementById("roleBtn").classList.remove("active");
     });
+
+    // Initialize roles for default model
+    updateRolesForModel("Private");
 });
 
 
@@ -391,7 +421,7 @@ async function sendMessage() {
     input.style.height = "44px"; // Reset height after sending
 
     const selectedRole = document.getElementById("roleSelect").value;
-    const selectedModel = document.getElementById("modelSelect").value;  // ADD THIS
+    const selectedModel = document.getElementById("modelSelect").value;
 
 
     const res = await fetch("/chat", {
@@ -401,7 +431,7 @@ async function sendMessage() {
             message: text,
             session_id: currentSessionId,
             role: selectedRole,
-            model: selectedModel  // ADD THIS
+            model: selectedModel
         })
     });
 

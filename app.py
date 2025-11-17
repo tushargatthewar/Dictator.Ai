@@ -10,6 +10,7 @@ import os
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 from prompt import generate_prompt
+from prompt2 import generate_prompt1
 
 
 
@@ -205,11 +206,16 @@ def chat():
     user_message = data.get('message')
     session_id = data.get('session_id')
     selected_role = data.get('role')
-    model=data.get('model','gpt-4')
+    model=data.get('model','private')
     print(selected_role)
     print("######################################################################################")
     print(model)
-    prompt=generate_prompt(selected_role,user_message)
+    if model=="Private":
+        prompt=generate_prompt1(selected_role,user_message)
+    else:
+        prompt=generate_prompt(selected_role,user_message)
+
+
 
 
     if not user_message:
@@ -240,25 +246,45 @@ def chat():
         {"username": username, "session_id": session_id},
         {"$push": {"messages": user_msg_doc}, "$set": {"updated_at": datetime.utcnow()}}
     )
-
-    url = os.getenv("LLM_URL")
-    api=os.getenv("LLM_KEY")
-
-
-    headers = {
-    "Authorization": f"Bearer {api}",
-    "Content-Type": "application/json"
-    }
+    if model=="One_to_one":
+        url = os.getenv("LLM_URL1")
+        api=os.getenv("LLM_KEY1")
 
 
+        headers = {
+        "Authorization": f"Bearer {api}",
+        "Content-Type": "application/json"
+        }
 
-    # Prepare payload to LLM
-    data = {
-        "model": "krishnasuratwala/Dictatorai_speechmodel",
-        "messages": [
-            {"role":"user", "content": prompt}
-        ]
-    }
+
+
+        # Prepare payload to LLM
+        data = {
+            "model": "krishnasuratwala/Dictatorai_one_to_one_model",
+            "messages": [
+                {"role":"user", "content": prompt}
+            ]
+        }
+    else:
+        url = os.getenv("LLM_URL2")
+        api=os.getenv("LLM_KEY2")
+
+
+        headers = {
+        "Authorization": f"Bearer {api}",
+        "Content-Type": "application/json"
+        }
+
+
+
+        # Prepare payload to LLM
+        data = {
+            "model": "krishnasuratwala/Dictatorai_speechmodel",
+            "messages": [
+                {"role":"user", "content": prompt}
+            ]
+        }
+
     print(data["messages"])
 
     ai_reply = "⚠️ Error contacting AI server."
