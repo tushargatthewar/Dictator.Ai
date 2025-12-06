@@ -248,7 +248,7 @@ def chat():
     )
     if model=="Public":
         url = os.getenv("LLM_URL1")
-        api=os.getenv("LLM_KEY1")
+        #api=os.getenv("LLM_KEY1")
 
 
         headers = {
@@ -267,7 +267,7 @@ def chat():
         }
     elif model=="Private":
         url = os.getenv("LLM_URL2")
-        api=os.getenv("LLM_KEY2")
+        #api=os.getenv("LLM_KEY2")
 
 
         headers = {
