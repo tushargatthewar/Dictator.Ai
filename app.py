@@ -252,7 +252,7 @@ def chat():
 
 
         headers = {
-        "Authorization": f"Bearer {api}",
+        # "Authorization": f"Bearer {api}",
         "Content-Type": "application/json"
         }
 
@@ -271,12 +271,12 @@ def chat():
 
 
         headers = {
-        "Authorization": f"Bearer {api}",
+        # "Authorization": f"Bearer {api}",
         "Content-Type": "application/json"
         }
                 # Prepare payload to LLM
         data = {
-            "model": "krishnasuratwala/Dictatorai_one_to_one_model",
+            "model": "krishnasuratwala/Dictatorai_one_to_one_Q4_K_M:Q4_K_M",
             "messages": [
                 {"role":"user", "content": prompt}
             ]
@@ -284,10 +284,6 @@ def chat():
     else:
 
         return jsonify({'reply': 'Invalid model selected!'}), 400
-
-
-
-
 
     print(data["messages"])
 
